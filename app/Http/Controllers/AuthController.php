@@ -17,7 +17,7 @@ class AuthController extends Controller
             $cred->email = $R->email;
             $cred->password = Hash::make($R->password);
             $cred->save();
-            $response = ['status' => 200, 'message' => 'Register Successfully! Welcome to Our Community'];
+            $response = ['status' => 200, 'message' => 'Succesvol geregistreerd! Welkom op onze app'];
             return response()->json($response);
         } catch (Exception $e) {
             $response = ['status' => 500, 'message' => $e];
@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         if($user!='[]' && Hash::check($R->password,$user->password)){
             $token = $user->createToken('Personal Access Token')->plainTextToken;
-            $response = ['status' => 200, 'token' => $token, 'user' => $user, 'message' => 'Successfully Login! Welcome Back'];
+            $response = ['status' => 200, 'token' => $token, 'user' => $user, 'message' => 'Succesvol ingelogd! Welkom terug'];
             return response()->json($response);
         }else if($user=='[]'){
             $response = ['status' => 500, 'message' => 'Geen account gevonden met deze email'];
