@@ -13,5 +13,5 @@ Route::get('/user', function (Request $request) {
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('data', [DataController::class, 'store']);
-Route::get('/data/last-five-days', [DataController::class, 'getLastFiveDaysScores']);
+Route::post('/data/last-five-days', [DataController::class, 'getLastFiveDaysScores']);
 Route::post('/data/by-date', [DataController::class, 'getDataByDate']);

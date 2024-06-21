@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Data;
+use App\Models\User;
 use Exception;
 
 class DataController extends Controller
@@ -11,7 +12,16 @@ class DataController extends Controller
     public function store(Request $request)
     {
         try {
+            $name = $request->input('name');
+
+            $user = User::where('name', $name)->first();
+
+            if (!$user) {
+                return response()->json(['status' => 401, 'message' => 'Unauthorized'], 401);
+            }
+
             $data = new Data();
+            $data->name = $user->name;
             $data->date = $request->date;
             $data->emotion = $request->emotion;
             $data->experienced = $request->experienced;
@@ -27,20 +37,19 @@ class DataController extends Controller
         }
     }
 
+
     public function getLastFiveDaysScores(Request $request)
     {
         try {
-            $token = $request->header('Authorization');
+            $name = $request->input('name');
 
-            $token = str_replace('Bearer ', '', $token);
-
-            $user = User::where('remember_token', $token)->first();
+            $user = User::where('name', $name)->first();
 
             if (!$user) {
                 return response()->json(['status' => 401, 'message' => 'Unauthorized'], 401);
             }
 
-            $data = Data::where('user_id', $user->id)
+            $data = Data::where('name', $name)
                         ->orderBy('date', 'desc')
                         ->take(5)
                         ->get(['date', 'dayScore']);
@@ -53,14 +62,16 @@ class DataController extends Controller
         }
     }
 
+
+
+
+
     public function getDataByDate(Request $request)
     {
         try {
-            $token = $request->header('Authorization');
+            $name = $request->input('name');
 
-            $token = str_replace('Bearer ', '', $token);
-
-            $user = User::where('remember_token', $token)->first();
+            $user = User::where('name', $name)->first();
 
             if (!$user) {
                 return response()->json(['status' => 401, 'message' => 'Unauthorized'], 401);
@@ -69,7 +80,7 @@ class DataController extends Controller
             $date = $request->date;
 
             $data = Data::whereDate('date', $date)
-                        ->where('user_id', $user->id)
+                        ->where('name', $name)
                         ->get();
 
             $response = ['status' => 200, 'data' => $data];
@@ -79,5 +90,4 @@ class DataController extends Controller
             return response()->json($response);
         }
     }
-
 }
